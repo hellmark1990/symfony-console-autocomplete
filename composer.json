@@ -1,5 +1,5 @@
 {
-    "name": "bamarni/symfony-console-autocomplete",
+    "name": "hellmark1990/symfony-console-autocomplete",
     "description": "Shell completion for Symfony Console based scripts",
     "license": "MIT",
     "require": {
