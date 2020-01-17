@@ -28,6 +28,14 @@ class DumpCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $cacheFile = dirname(realpath(__DIR__ . '/../../../')) . '/var/cache/dev/symfony-autocomplete.txt';
+
+        if (file_exists($cacheFile)) {
+            $output->write(file_get_contents($cacheFile));
+
+            return;
+        }
+
         $shell = $input->getOption('shell');
         $script = $input->getArgument('script');
 
@@ -123,16 +131,19 @@ class DumpCommand extends Command
             $tools = array_unique(array_merge($tools, $extraTools));
         }
 
-        $output->write($this->render($shell . '/cached', array(
-            'script' => $script,
-            'options_global' => $globalOptions,
-            'options_command' => $commandsOptions,
-            'options_descriptions' => $optionsDescriptions,
-            'commands' => $commands,
-            'commands_descriptions' => $commandsDescriptions,
+        $commands = $this->render($shell . '/cached', [
+            'script'                        => $script,
+            'options_global'                => $globalOptions,
+            'options_command'               => $commandsOptions,
+            'options_descriptions'          => $optionsDescriptions,
+            'commands'                      => $commands,
+            'commands_descriptions'         => $commandsDescriptions,
             'commands_options_descriptions' => $commandsOptionsDescriptions,
-            'tools' => $tools,
-        )));
+            'tools'                         => $tools,
+        ]);
+
+        $output->write($commands);
+        file_put_contents($cacheFile, $commands);
     }
 
     private function render($template, $vars)
